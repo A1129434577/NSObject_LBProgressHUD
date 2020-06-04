@@ -19,7 +19,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (MBProgressHUD *)showWithImage:(UIImage *)image status:(NSString *_Nullable)status;
 - (MBProgressHUD *)showWithImage:(UIImage *)image status:(NSString *_Nullable)status completion:(MBProgressHUDCompletionBlock)completion;
 
-
 - (MBProgressHUD *)showSuccessWithStatus:(NSString *_Nullable)status;
 - (MBProgressHUD *)showSuccessWithStatus:(NSString *_Nullable)status completion:(MBProgressHUDCompletionBlock)completion;
 
@@ -28,6 +27,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (MBProgressHUD *)showErrorWithStatus:(NSString *_Nullable)status;
 - (MBProgressHUD *)showErrorWithStatus:(NSString *_Nullable)status completion:(MBProgressHUDCompletionBlock)completion;
+
+- (MBProgressHUD *)showCustomView:(UIView *_Nullable)customView;
+- (MBProgressHUD *)showCustomView:(UIView *_Nullable)customView withStatus:(NSString *_Nullable)status;
+-(MBProgressHUD *)showCustomView:(UIView *)customView withStatus:(NSString *)status completion:(MBProgressHUDCompletionBlock)completion;
 
 - (void)dismiss;
 - (void)dismissWithAnimated:(BOOL)animated;

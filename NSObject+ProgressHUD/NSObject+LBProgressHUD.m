@@ -156,6 +156,30 @@ static NSString *const LBProgressHUDBundleName = @"LBProgressHUD";
     return hud;
 }
 
+-(MBProgressHUD *)showCustomView:(UIView *)customView{
+    return [self showCustomView:customView withStatus:nil];
+}
+
+-(MBProgressHUD *)showCustomView:(UIView *)customView withStatus:(NSString *)status{
+    [self dismissWithAnimated:NO];
+    MBProgressHUD *hud = [self configHUD];
+
+    hud.label.text = status;
+    hud.mode = MBProgressHUDModeCustomView;
+    
+    hud.customView = customView;
+    
+    return hud;
+}
+
+-(MBProgressHUD *)showCustomView:(UIView *)customView withStatus:(NSString *)status completion:(MBProgressHUDCompletionBlock)completion{
+    MBProgressHUD *hud = [self showCustomView:customView withStatus:status];
+    hud.completionBlock = completion;
+    [hud hideAnimated:YES afterDelay:[self displayDurationForString:status]];
+    return hud;
+}
+
+
 - (void)dismiss{
     [self dismissWithAnimated:YES];
 }
