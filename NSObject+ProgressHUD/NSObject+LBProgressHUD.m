@@ -9,14 +9,9 @@
 #import "NSObject+LBProgressHUD.h"
 
 #define LB_MAX_SHOW_SECOND 20
-static NSString *const LBProgressHUDBundleName = @"LBProgressHUD";
 
 @interface LBMBProgressHUDCustomView : UIImageView
 @property (nonatomic, assign) CGSize size;
-@end
-
-@interface NSBundle (AssociatedBundle)
-+ (NSBundle *)bundleWithBundleName:(NSString *)bundleName;
 @end
 
 @implementation NSObject (LBProgressHUD)
@@ -82,7 +77,7 @@ static NSString *const LBProgressHUDBundleName = @"LBProgressHUD";
 
     CALayer *maskLayer = [CALayer layer];
         
-    NSBundle *bundle = [NSBundle bundleWithBundleName:LBProgressHUDBundleName];
+    NSBundle *bundle = [self LBProgressHUDBundle];
     maskLayer.contents = (__bridge id)[[UIImage imageWithContentsOfFile:[bundle pathForResource:@"angle-mask" ofType:@"png"]] CGImage];
     maskLayer.frame = indefiniteAnimatedLayer.bounds;
     indefiniteAnimatedLayer.mask = maskLayer;
@@ -127,7 +122,7 @@ static NSString *const LBProgressHUDBundleName = @"LBProgressHUD";
 }
 
 - (MBProgressHUD *)showSuccessWithStatus:(NSString *_Nullable)status{
-    NSBundle *bundle = [NSBundle bundleWithBundleName:LBProgressHUDBundleName];
+    NSBundle *bundle = [self LBProgressHUDBundle];
     MBProgressHUD *hud = [self showWithImage:[UIImage imageWithContentsOfFile:[bundle pathForResource:@"success" ofType:@"png"]] status:status];
     return hud;
 }
@@ -138,7 +133,7 @@ static NSString *const LBProgressHUDBundleName = @"LBProgressHUD";
 }
 
 - (MBProgressHUD *)showInfoWithStatus:(NSString *_Nullable)status{
-    NSBundle *bundle = [NSBundle bundleWithBundleName:LBProgressHUDBundleName];
+    NSBundle *bundle = [self LBProgressHUDBundle];
     MBProgressHUD *hud = [self showWithImage:[UIImage imageWithContentsOfFile:[bundle pathForResource:@"info" ofType:@"png"]] status:status];
     return hud;
 }
@@ -149,7 +144,7 @@ static NSString *const LBProgressHUDBundleName = @"LBProgressHUD";
 }
 
 - (MBProgressHUD *)showErrorWithStatus:(NSString *_Nullable)status{
-    NSBundle *bundle = [NSBundle bundleWithBundleName:LBProgressHUDBundleName];
+    NSBundle *bundle = [self LBProgressHUDBundle];
     MBProgressHUD *hud = [self showWithImage:[UIImage imageWithContentsOfFile:[bundle pathForResource:@"error" ofType:@"png"]] status:status];
     return hud;
 }
@@ -168,6 +163,29 @@ static NSString *const LBProgressHUDBundleName = @"LBProgressHUD";
     [hud hideAnimated:animated];
 }
 
+- (NSBundle *)LBProgressHUDBundle{
+    NSString *bundleName = @"LBProgressHUD";
+    
+    if ([bundleName containsString:@".bundle"]) {
+        bundleName = [bundleName componentsSeparatedByString:@".bundle"].firstObject;
+    }
+    //没使用framwork的情况下
+    NSURL *associateBundleURL = [[NSBundle mainBundle] URLForResource:bundleName withExtension:@"bundle"];
+    //使用framework形式
+    if (!associateBundleURL) {
+        associateBundleURL = [[NSBundle mainBundle] URLForResource:@"Frameworks" withExtension:nil];
+        associateBundleURL = [associateBundleURL URLByAppendingPathComponent:bundleName];
+        associateBundleURL = [associateBundleURL URLByAppendingPathExtension:@"framework"];
+        NSBundle *associateBunle = [NSBundle bundleWithURL:associateBundleURL];
+        associateBundleURL = [associateBunle URLForResource:bundleName withExtension:@"bundle"];
+    }
+    
+    NSAssert(associateBundleURL, @"取不到关联bundle");
+    //生产环境直接返回空
+    return associateBundleURL?[NSBundle bundleWithURL:associateBundleURL]:nil;
+}
+
+
 
 
 #pragma clang diagnostic pop
@@ -179,41 +197,3 @@ static NSString *const LBProgressHUDBundleName = @"LBProgressHUD";
 }
 @end
 
-
-@implementation NSBundle (AssociatedBundle)
-/**
- 获取文件所在name，默认情况下podName和bundlename相同，传一个即可
- 
- @param bundleName bundle名字，就是在resource_bundles里面的名字
- @return bundle
- */
-+ (NSBundle *)bundleWithBundleName:(NSString *)bundleName{
-    NSString *podName = @"NSObject_LBProgressHUD";
-    if (bundleName == nil && podName == nil) {
-        @throw @"bundleName和podName不能同时为空";
-    }else if (bundleName == nil ) {
-        bundleName = podName;
-    }else if (podName == nil) {
-        podName = bundleName;
-    }
-    
-    
-    if ([bundleName containsString:@".bundle"]) {
-        bundleName = [bundleName componentsSeparatedByString:@".bundle"].firstObject;
-    }
-    //没使用framwork的情况下
-    NSURL *associateBundleURL = [[NSBundle mainBundle] URLForResource:bundleName withExtension:@"bundle"];
-    //使用framework形式
-    if (!associateBundleURL) {
-        associateBundleURL = [[NSBundle mainBundle] URLForResource:@"Frameworks" withExtension:nil];
-        associateBundleURL = [associateBundleURL URLByAppendingPathComponent:podName];
-        associateBundleURL = [associateBundleURL URLByAppendingPathExtension:@"framework"];
-        NSBundle *associateBunle = [NSBundle bundleWithURL:associateBundleURL];
-        associateBundleURL = [associateBunle URLForResource:bundleName withExtension:@"bundle"];
-    }
-    
-    NSAssert(associateBundleURL, @"取不到关联bundle");
-    //生产环境直接返回空
-    return associateBundleURL?[NSBundle bundleWithURL:associateBundleURL]:nil;
-}
-@end
