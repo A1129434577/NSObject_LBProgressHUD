@@ -7,8 +7,12 @@
 //
 
 #import "NSObject+LBProgressHUD.h"
+#import <objc/runtime.h>
 
 #define LB_MAX_SHOW_SECOND 20
+
+static NSString *LB_ConfigHUDBlockKey = @"LB_ConfigHUDBlockKey";
+
 
 @interface LBMBProgressHUDCustomView : UIImageView
 @property (nonatomic, assign) CGSize size;
@@ -19,19 +23,33 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
+-(void)setConfigHUDBlock:(void (^)(MBProgressHUD * _Nonnull))configHUDBlock{
+    objc_setAssociatedObject(self, &LB_ConfigHUDBlockKey, configHUDBlock, OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+
+-(void (^)(MBProgressHUD * _Nonnull))configHUDBlock{
+    return objc_getAssociatedObject(self, &LB_ConfigHUDBlockKey);
+}
+
 - (NSTimeInterval)displayDurationForString:(NSString*)string {
     NSTimeInterval displayDuration = MIN((CGFloat)string.length * 0.06 + 0.5, 5);
     return displayDuration;
 }
 
 - (MBProgressHUD *)configHUD{
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:LB_KEY_WINDOW animated:YES];
-    hud.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.1];
-    hud.contentColor = [[UIColor blackColor] colorWithAlphaComponent:0.8];
-    hud.bezelView.style = MBProgressHUDBackgroundStyleSolidColor;
-    hud.bezelView.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.8];
-    hud.removeFromSuperViewOnHide = YES;
-    hud.minShowTime = 1;
+    MBProgressHUD *hud;
+    if (self.configHUDBlock) {
+        hud = [MBProgressHUD showHUDAddedTo:LB_KEY_WINDOW animated:YES];
+        self.configHUDBlock(hud);
+    }else{
+        hud = [MBProgressHUD showHUDAddedTo:LB_KEY_WINDOW animated:YES];
+        hud.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.1];
+        hud.bezelView.style = MBProgressHUDBackgroundStyleSolidColor;
+        hud.bezelView.backgroundColor = [UIColor whiteColor];
+        hud.removeFromSuperViewOnHide = YES;
+        hud.minShowTime = 1;
+    }
+    
     return hud;
 }
 
@@ -69,7 +87,7 @@
     indefiniteAnimatedLayer.contentsScale = [[UIScreen mainScreen] scale];
     indefiniteAnimatedLayer.frame = CGRectMake(0, 0, customViewSide, customViewSide);
     indefiniteAnimatedLayer.fillColor = [UIColor clearColor].CGColor;
-    indefiniteAnimatedLayer.strokeColor = [UIColor blackColor].CGColor;
+    indefiniteAnimatedLayer.strokeColor = hud.contentColor.CGColor;
     indefiniteAnimatedLayer.lineWidth = 2;
     indefiniteAnimatedLayer.lineCap = kCALineCapRound;
     indefiniteAnimatedLayer.lineJoin = kCALineJoinBevel;
@@ -78,7 +96,8 @@
     CALayer *maskLayer = [CALayer layer];
         
     NSBundle *bundle = [self LBProgressHUDBundle];
-    maskLayer.contents = (__bridge id)[[UIImage imageWithContentsOfFile:[bundle pathForResource:@"angle-mask" ofType:@"png"]] CGImage];
+    UIImage *progressImage = [UIImage imageWithContentsOfFile:[bundle pathForResource:@"angle-mask" ofType:@"png"]];
+    maskLayer.contents = (__bridge id)progressImage.CGImage;
     maskLayer.frame = indefiniteAnimatedLayer.bounds;
     indefiniteAnimatedLayer.mask = maskLayer;
     
@@ -107,7 +126,7 @@
     LBMBProgressHUDCustomView *customView = [[LBMBProgressHUDCustomView alloc] init];
     customView.size = CGSizeMake(35, 35);
     customView.backgroundColor = [UIColor clearColor];
-    customView.image = image;
+    customView.image = [self lb_changImage:image withColor:hud.contentColor];
     hud.customView = customView;
     
     [hud hideAnimated:YES afterDelay:[self displayDurationForString:status]];
@@ -186,7 +205,24 @@
 }
 
 
-
+- (UIImage *)lb_changImage:(UIImage *)image withColor:(UIColor *)color
+{
+    @autoreleasepool{
+        UIGraphicsBeginImageContextWithOptions(image.size, NO, image.scale);
+        CGContextRef context = UIGraphicsGetCurrentContext();
+        CGContextTranslateCTM(context, 0, image.size.height);
+        CGContextScaleCTM(context, 1.0, -1.0);
+        CGContextSetBlendMode(context, kCGBlendModeNormal);
+        CGRect rect = CGRectMake(0, 0, image.size.width, image.size.height);
+        CGContextClipToMask(context, rect, image.CGImage);
+        [color setFill];
+        CGContextFillRect(context, rect);
+        UIImage*newImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        return newImage;
+    }
+    
+}
 
 #pragma clang diagnostic pop
 @end

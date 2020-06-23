@@ -18,6 +18,20 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, (CGRectGetHeight(self.view.frame)-50)/2, CGRectGetWidth(self.view.frame), 50)];
+    label.font = [UIFont systemFontOfSize:17];
+    label.textAlignment = NSTextAlignmentCenter;
+    label.text = @"MBProgressHUD二次封装，使其使用起来更方便";
+    [self.view addSubview:label];
+    
+    self.configHUDBlock = ^(MBProgressHUD * _Nonnull hud) {
+        hud.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.1];
+        hud.bezelView.style = MBProgressHUDBackgroundStyleSolidColor;
+        hud.bezelView.backgroundColor = [UIColor blackColor];
+        hud.removeFromSuperViewOnHide = YES;
+        hud.minShowTime = 1;
+        hud.contentColor = [UIColor whiteColor];
+    };
 }
 
 -(void)viewDidAppear:(BOOL)animated{
