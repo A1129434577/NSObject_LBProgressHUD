@@ -182,26 +182,13 @@ static NSString *LB_ConfigHUDBlockKey = @"LB_ConfigHUDBlockKey";
     [hud hideAnimated:animated];
 }
 
-- (NSBundle *)LBProgressHUDBundle{
-    NSString *bundleName = @"LBProgressHUD";
-    
-    if ([bundleName containsString:@".bundle"]) {
-        bundleName = [bundleName componentsSeparatedByString:@".bundle"].firstObject;
+- (NSBundle *)LBProgressHUDBundle
+{
+    static NSBundle *progressHUDBundle = nil;
+    if (progressHUDBundle == nil) {
+        progressHUDBundle = [NSBundle bundleWithPath:[[NSBundle bundleForClass:[self class]] pathForResource:@"LBProgressHUD" ofType:@"bundle"]];
     }
-    //没使用framwork的情况下
-    NSURL *associateBundleURL = [[NSBundle mainBundle] URLForResource:bundleName withExtension:@"bundle"];
-    //使用framework形式
-    if (!associateBundleURL) {
-        associateBundleURL = [[NSBundle mainBundle] URLForResource:@"Frameworks" withExtension:nil];
-        associateBundleURL = [associateBundleURL URLByAppendingPathComponent:bundleName];
-        associateBundleURL = [associateBundleURL URLByAppendingPathExtension:@"framework"];
-        NSBundle *associateBunle = [NSBundle bundleWithURL:associateBundleURL];
-        associateBundleURL = [associateBunle URLForResource:bundleName withExtension:@"bundle"];
-    }
-    
-    NSAssert(associateBundleURL, @"取不到关联bundle");
-    //生产环境直接返回空
-    return associateBundleURL?[NSBundle bundleWithURL:associateBundleURL]:nil;
+    return progressHUDBundle;
 }
 
 
