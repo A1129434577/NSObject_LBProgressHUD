@@ -24,13 +24,12 @@
     label.text = @"MBProgressHUD二次封装，使其使用起来更方便";
     [self.view addSubview:label];
     
-    self.configHUDBlock = ^(MBProgressHUD * _Nonnull hud) {
-        hud.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.1];
-        hud.bezelView.style = MBProgressHUDBackgroundStyleSolidColor;
-        hud.bezelView.backgroundColor = [UIColor blackColor];
-        hud.removeFromSuperViewOnHide = YES;
-        hud.minShowTime = 1;
-        hud.contentColor = [UIColor whiteColor];
+    self.configHUDBlock = ^(MBProgressHUD * _Nonnull hud, LBProgressHUDType type) {
+        if (type == LBProgressHUDImageStatus) {
+            hud.bezelView.backgroundColor = [UIColor blackColor];
+            hud.contentColor = [UIColor whiteColor];
+            hud.minShowTime = 1;
+        }
     };
 }
 

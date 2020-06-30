@@ -10,9 +10,16 @@
 #import "MBProgressHUD.h"
 #import "LBUIMacro.h"
 
+typedef NS_ENUM(NSUInteger, LBProgressHUDType) {
+    LBProgressHUDTextStatus = 1,
+    LBProgressHUDProgressStatus,
+    LBProgressHUDImageStatus,
+};
+
 NS_ASSUME_NONNULL_BEGIN
+
 @interface NSObject (LBProgressHUD)
-@property (nonatomic, copy)void (^configHUDBlock)(MBProgressHUD *hud);//直接调用show方法会设置默认的hud外观，你也可以通过此block重新设置其外观
+@property (nonatomic, copy, nullable)void (^configHUDBlock)(MBProgressHUD *hud,LBProgressHUDType type);//直接调用show方法会设置默认的hud外观，你也可以通过此block重新设置其外观
 
 - (MBProgressHUD *)showWithStatus:(NSString *_Nullable)status;
 

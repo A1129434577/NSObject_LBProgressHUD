@@ -24,11 +24,11 @@ static NSString *LB_ConfigHUDBlockKey = @"LB_ConfigHUDBlockKey";
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
--(void)setConfigHUDBlock:(void (^)(MBProgressHUD * _Nonnull))configHUDBlock{
+-(void)setConfigHUDBlock:(void (^)(MBProgressHUD * _Nonnull, LBProgressHUDType))configHUDBlock{
     objc_setAssociatedObject(self, &LB_ConfigHUDBlockKey, configHUDBlock, OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
 
--(void (^)(MBProgressHUD * _Nonnull))configHUDBlock{
+-(void (^)(MBProgressHUD * _Nonnull, LBProgressHUDType))configHUDBlock{
     return objc_getAssociatedObject(self, &LB_ConfigHUDBlockKey);
 }
 
@@ -37,25 +37,21 @@ static NSString *LB_ConfigHUDBlockKey = @"LB_ConfigHUDBlockKey";
     return displayDuration;
 }
 
-- (MBProgressHUD *)configHUD{
-    MBProgressHUD *hud;
+- (MBProgressHUD *)configHUDWithType:(LBProgressHUDType )type{
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:LB_KEY_WINDOW animated:YES];
+    hud.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.1];
+    hud.bezelView.style = MBProgressHUDBackgroundStyleSolidColor;
+    hud.bezelView.backgroundColor = [UIColor whiteColor];
+    hud.removeFromSuperViewOnHide = YES;
     if (self.configHUDBlock) {
-        hud = [MBProgressHUD showHUDAddedTo:LB_KEY_WINDOW animated:YES];
-        self.configHUDBlock(hud);
-    }else{
-        hud = [MBProgressHUD showHUDAddedTo:LB_KEY_WINDOW animated:YES];
-        hud.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.1];
-        hud.bezelView.style = MBProgressHUDBackgroundStyleSolidColor;
-        hud.bezelView.backgroundColor = [UIColor whiteColor];
-        hud.removeFromSuperViewOnHide = YES;
+        self.configHUDBlock(hud,type);
     }
-    
     return hud;
 }
 
 - (MBProgressHUD *)showWithStatus:(NSString *_Nullable)status{
     [self dismissWithAnimated:NO];
-    MBProgressHUD *hud = [self configHUD];
+    MBProgressHUD *hud = [self configHUDWithType:LBProgressHUDTextStatus];
     
     hud.label.text = status;
     hud.mode = MBProgressHUDModeText;
@@ -67,7 +63,7 @@ static NSString *LB_ConfigHUDBlockKey = @"LB_ConfigHUDBlockKey";
 
 - (MBProgressHUD *)showProgressWithStatus:(NSString *_Nullable)status{
     [self dismissWithAnimated:NO];
-    MBProgressHUD *hud = [self configHUD];
+    MBProgressHUD *hud = [self configHUDWithType:LBProgressHUDProgressStatus];
 
     hud.label.text = status;
     hud.mode = MBProgressHUDModeCustomView;
@@ -117,7 +113,7 @@ static NSString *LB_ConfigHUDBlockKey = @"LB_ConfigHUDBlockKey";
 
 -(MBProgressHUD *)showWithImage:(UIImage *)image status:(NSString *_Nullable)status{
     [self dismissWithAnimated:NO];
-    MBProgressHUD *hud = [self configHUD];
+    MBProgressHUD *hud = [self configHUDWithType:LBProgressHUDImageStatus];
 
     hud.label.text = status;
     hud.mode = MBProgressHUDModeCustomView;
