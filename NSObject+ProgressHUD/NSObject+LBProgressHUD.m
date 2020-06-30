@@ -14,8 +14,9 @@
 static NSString *LB_ConfigHUDBlockKey = @"LB_ConfigHUDBlockKey";
 
 
-@interface LBMBProgressHUDCustomView : UIImageView
+@interface LBMBProgressHUDCustomView : UIView
 @property (nonatomic, assign) CGSize size;
+@property (nonatomic, strong) UIImageView *imageView;
 @end
 
 @implementation NSObject (LBProgressHUD)
@@ -74,12 +75,12 @@ static NSString *LB_ConfigHUDBlockKey = @"LB_ConfigHUDBlockKey";
     
     
     LBMBProgressHUDCustomView *customView = [[LBMBProgressHUDCustomView alloc] init];
-    customView.size = CGSizeMake(70, 70);
+    customView.size = CGSizeMake(60, 70);
     customView.backgroundColor = [UIColor clearColor];
     hud.customView = customView;
     
     CGFloat customViewSide = customView.intrinsicContentSize.width;
-    CGFloat loadingSide = customView.intrinsicContentSize.width-15;
+    CGFloat loadingSide = customView.intrinsicContentSize.width-5;
     
     UIBezierPath* smoothedPath = [UIBezierPath bezierPathWithArcCenter:CGPointMake(customViewSide/2, customViewSide/2) radius:loadingSide/2 startAngle:0 endAngle:2*M_PI clockwise:YES];
     
@@ -101,7 +102,7 @@ static NSString *LB_ConfigHUDBlockKey = @"LB_ConfigHUDBlockKey";
     maskLayer.frame = indefiniteAnimatedLayer.bounds;
     indefiniteAnimatedLayer.mask = maskLayer;
     
-    [customView.layer addSublayer:indefiniteAnimatedLayer];
+    [customView.imageView.layer addSublayer:indefiniteAnimatedLayer];
     
     CABasicAnimation* rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
     rotationAnimation.toValue = [NSNumber numberWithFloat:2*M_PI];
@@ -124,9 +125,9 @@ static NSString *LB_ConfigHUDBlockKey = @"LB_ConfigHUDBlockKey";
     
     
     LBMBProgressHUDCustomView *customView = [[LBMBProgressHUDCustomView alloc] init];
-    customView.size = CGSizeMake(35, 35);
+    customView.size = CGSizeMake(35, 45);
     customView.backgroundColor = [UIColor clearColor];
-    customView.image = [self lb_changImage:image withColor:hud.contentColor];
+    customView.imageView.image = [self lb_changImage:image withColor:hud.contentColor];
     hud.customView = customView;
     
     [hud hideAnimated:YES afterDelay:[self displayDurationForString:status]];
@@ -230,6 +231,20 @@ static NSString *LB_ConfigHUDBlockKey = @"LB_ConfigHUDBlockKey";
 @implementation LBMBProgressHUDCustomView
 - (CGSize)intrinsicContentSize {
     return self.size;
+}
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        _imageView = [[UIImageView alloc] init];
+        [self addSubview:_imageView];
+    }
+    return self;
+}
+
+-(void)layoutSubviews{
+    [super layoutSubviews];
+    _imageView.frame = CGRectMake(0, 0, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame)-10);
 }
 @end
 
