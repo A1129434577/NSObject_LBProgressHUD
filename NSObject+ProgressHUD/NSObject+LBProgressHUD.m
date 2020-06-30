@@ -48,7 +48,6 @@ static NSString *LB_ConfigHUDBlockKey = @"LB_ConfigHUDBlockKey";
         hud.bezelView.style = MBProgressHUDBackgroundStyleSolidColor;
         hud.bezelView.backgroundColor = [UIColor whiteColor];
         hud.removeFromSuperViewOnHide = YES;
-        hud.minShowTime = 1;
     }
     
     return hud;
