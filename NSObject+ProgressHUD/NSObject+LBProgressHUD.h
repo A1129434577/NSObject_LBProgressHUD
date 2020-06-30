@@ -17,10 +17,13 @@ typedef NS_ENUM(NSUInteger, LBProgressHUDType) {
 };
 
 NS_ASSUME_NONNULL_BEGIN
+@protocol LBProgressHUDConfigProtocol <NSObject>
+@optional
+//直接调用show方法会设置默认的hud外观，你也可以通过此方法重新设置其外观
+- (void)configHUD:(MBProgressHUD *)hud withType:(LBProgressHUDType)type;
+@end
 
-@interface NSObject (LBProgressHUD)
-@property (nonatomic, copy, nullable)void (^configHUDBlock)(MBProgressHUD *hud,LBProgressHUDType type);//直接调用show方法会设置默认的hud外观，你也可以通过此block重新设置其外观
-
+@interface NSObject (LBProgressHUD)<LBProgressHUDConfigProtocol>
 - (MBProgressHUD *)showWithStatus:(NSString *_Nullable)status;
 
 - (MBProgressHUD *)showProgressWithStatus:(NSString *_Nullable)status;

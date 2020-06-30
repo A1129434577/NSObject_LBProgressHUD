@@ -11,9 +11,6 @@
 
 #define LB_MAX_SHOW_SECOND 20
 
-static NSString *LB_ConfigHUDBlockKey = @"LB_ConfigHUDBlockKey";
-
-
 @interface LBMBProgressHUDCustomView : UIView
 @property (nonatomic, assign) CGSize size;
 @property (nonatomic, strong) UIImageView *imageView;
@@ -23,14 +20,6 @@ static NSString *LB_ConfigHUDBlockKey = @"LB_ConfigHUDBlockKey";
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-
--(void)setConfigHUDBlock:(void (^)(MBProgressHUD * _Nonnull, LBProgressHUDType))configHUDBlock{
-    objc_setAssociatedObject(self, &LB_ConfigHUDBlockKey, configHUDBlock, OBJC_ASSOCIATION_COPY_NONATOMIC);
-}
-
--(void (^)(MBProgressHUD * _Nonnull, LBProgressHUDType))configHUDBlock{
-    return objc_getAssociatedObject(self, &LB_ConfigHUDBlockKey);
-}
 
 - (NSTimeInterval)displayDurationForString:(NSString*)string {
     NSTimeInterval displayDuration = MIN((CGFloat)string.length * 0.06 + 0.5, 5);
@@ -43,8 +32,8 @@ static NSString *LB_ConfigHUDBlockKey = @"LB_ConfigHUDBlockKey";
     hud.bezelView.style = MBProgressHUDBackgroundStyleSolidColor;
     hud.bezelView.backgroundColor = [UIColor whiteColor];
     hud.removeFromSuperViewOnHide = YES;
-    if (self.configHUDBlock) {
-        self.configHUDBlock(hud,type);
+    if ([self respondsToSelector:@selector(configHUD:withType:)]) {
+        [self configHUD:hud withType:type];
     }
     return hud;
 }

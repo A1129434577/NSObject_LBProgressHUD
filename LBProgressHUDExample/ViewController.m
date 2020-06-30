@@ -9,11 +9,18 @@
 #import "ViewController.h"
 #import "NSObject+LBProgressHUD.h"
 
-@interface ViewController ()
+@interface ViewController ()<LBProgressHUDConfigProtocol>
 
 @end
 
 @implementation ViewController
+-(void)configHUD:(MBProgressHUD *)hud withType:(LBProgressHUDType)type{
+    if (type == LBProgressHUDImageStatus) {
+        hud.bezelView.backgroundColor = [UIColor blackColor];
+        hud.contentColor = [UIColor whiteColor];
+        hud.minShowTime = 1;
+    }
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -24,13 +31,9 @@
     label.text = @"MBProgressHUD二次封装，使其使用起来更方便";
     [self.view addSubview:label];
     
-    self.configHUDBlock = ^(MBProgressHUD * _Nonnull hud, LBProgressHUDType type) {
-        if (type == LBProgressHUDImageStatus) {
-            hud.bezelView.backgroundColor = [UIColor blackColor];
-            hud.contentColor = [UIColor whiteColor];
-            hud.minShowTime = 1;
-        }
-    };
+//    self.configHUDBlock = ^(MBProgressHUD * _Nonnull hud, LBProgressHUDType type) {
+//
+//    };
 }
 
 -(void)viewDidAppear:(BOOL)animated{
