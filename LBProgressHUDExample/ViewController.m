@@ -30,10 +30,6 @@
     label.textAlignment = NSTextAlignmentCenter;
     label.text = @"MBProgressHUD二次封装，使其使用起来更方便";
     [self.view addSubview:label];
-    
-//    self.configHUDBlock = ^(MBProgressHUD * _Nonnull hud, LBProgressHUDType type) {
-//
-//    };
 }
 
 -(void)viewDidAppear:(BOOL)animated{

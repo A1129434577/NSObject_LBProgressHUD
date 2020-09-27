@@ -42,6 +42,8 @@
     [self dismissWithAnimated:NO];
     MBProgressHUD *hud = [self configHUDWithType:LBProgressHUDTextStatus];
     
+    hud.offset = CGPointMake(0, MBProgressMaxOffset);
+    hud.margin = 5;
     hud.label.text = status;
     hud.mode = MBProgressHUDModeText;
     
