@@ -9,8 +9,6 @@
 #import "NSObject+LBProgressHUD.h"
 #import <objc/runtime.h>
 
-#define LB_MAX_SHOW_SECOND 20
-
 @interface LBMBProgressHUDCustomView : UIView
 @property (nonatomic, assign) CGSize size;
 @property (nonatomic, strong) UIImageView *imageView;
@@ -96,8 +94,6 @@
     rotationAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]; //缓入缓出
     rotationAnimation.repeatCount = INT_MAX;
     [indefiniteAnimatedLayer addAnimation:rotationAnimation forKey:@"progress"];
-        
-    [hud hideAnimated:YES afterDelay:LB_MAX_SHOW_SECOND];
     
     return hud;
 }
