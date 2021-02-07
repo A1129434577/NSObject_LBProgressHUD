@@ -26,6 +26,7 @@
 
 - (MBProgressHUD *)configHUDWithType:(LBProgressHUDType )type{
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:LB_KEY_WINDOW animated:YES];
+    hud.label.numberOfLines = 0;
     hud.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.1];
     hud.bezelView.style = MBProgressHUDBackgroundStyleSolidColor;
     hud.bezelView.backgroundColor = [UIColor whiteColor];
@@ -39,7 +40,7 @@
 - (MBProgressHUD *)showWithStatus:(NSString *_Nullable)status{
     [self dismissWithAnimated:NO];
     MBProgressHUD *hud = [self configHUDWithType:LBProgressHUDTextStatus];
-    
+    hud.userInteractionEnabled = NO;
     hud.offset = CGPointMake(0, MBProgressMaxOffset);
     hud.margin = 5;
     hud.label.text = status;
@@ -101,7 +102,7 @@
 -(MBProgressHUD *)showWithImage:(UIImage *)image status:(NSString *_Nullable)status{
     [self dismissWithAnimated:NO];
     MBProgressHUD *hud = [self configHUDWithType:LBProgressHUDImageStatus];
-
+    hud.userInteractionEnabled = NO;
     hud.label.text = status;
     hud.mode = MBProgressHUDModeCustomView;
     
