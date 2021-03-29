@@ -38,7 +38,7 @@
 }
 
 - (MBProgressHUD *)showWithStatus:(NSString *_Nullable)status{
-    [self dismissWithAnimated:NO];
+    [self dismissHUDWithAnimated:NO];
     MBProgressHUD *hud = [self configHUDWithType:LBProgressHUDTextStatus];
     hud.userInteractionEnabled = NO;
     hud.offset = CGPointMake(0, MBProgressMaxOffset);
@@ -52,7 +52,7 @@
 }
 
 - (MBProgressHUD *)showProgressWithStatus:(NSString *_Nullable)status{
-    [self dismissWithAnimated:NO];
+    [self dismissHUDWithAnimated:NO];
     MBProgressHUD *hud = [self configHUDWithType:LBProgressHUDProgressStatus];
 
     hud.label.text = status;
@@ -100,7 +100,7 @@
 }
 
 -(MBProgressHUD *)showWithImage:(UIImage *)image status:(NSString *_Nullable)status{
-    [self dismissWithAnimated:NO];
+    [self dismissHUDWithAnimated:NO];
     MBProgressHUD *hud = [self configHUDWithType:LBProgressHUDImageStatus];
     hud.userInteractionEnabled = NO;
     hud.label.text = status;
@@ -157,11 +157,11 @@
     return hud;
 }
 
-- (void)dismiss{
-    [self dismissWithAnimated:YES];
+- (void)dismissHUD{
+    [self dismissHUDWithAnimated:YES];
 }
 
-- (void)dismissWithAnimated:(BOOL)animated{
+- (void)dismissHUDWithAnimated:(BOOL)animated{
     MBProgressHUD *hud = [MBProgressHUD HUDForView:LB_KEY_WINDOW];
     [hud hideAnimated:animated];
 }

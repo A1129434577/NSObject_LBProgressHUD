@@ -41,8 +41,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (MBProgressHUD *)showErrorWithStatus:(NSString *_Nullable)status;
 - (MBProgressHUD *)showErrorWithStatus:(NSString *_Nullable)status completion:(MBProgressHUDCompletionBlock)completion;
 
-- (void)dismiss;
-- (void)dismissWithAnimated:(BOOL)animated;
+- (void)dismissHUD;
+- (void)dismissHUDWithAnimated:(BOOL)animated;
 @end
 
 NS_ASSUME_NONNULL_END
